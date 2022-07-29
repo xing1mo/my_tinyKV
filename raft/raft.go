@@ -449,6 +449,10 @@ func (r *Raft) tick() {
 		//	}
 		//}
 	} else {
+		// 新增节点未初始化，不能让它Term增大了，否则万一prs为空可能成为Leader
+		if len(r.Prs) == 0 {
+			return
+		}
 		r.electionElapsed++
 		// Follow,Candidate超时选举
 		if r.electionElapsed >= r.randomElectionTimeout {
